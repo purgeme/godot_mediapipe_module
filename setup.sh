@@ -1,18 +1,18 @@
 #!/bin/bash
 
-## Setup MediapipeModule_library
-#git clone https://github.com/purgeme/MediapipeModule_library.git
-#cd MediapipeModule_library
-#./setup.sh
-#./build.sh
-#
-## Copy libary file
-#mkdir ../libraries
-#cp library/libgmod.so ../libraries/
-#cd ..
-#
-## Download godot source code
-#git clone https://github.com/godotengine/godot.git -b 3.4
+# Setup MediapipeModule_library
+git clone https://github.com/purgeme/MediapipeModule_library.git
+cd MediapipeModule_library
+./setup.sh
+./build.sh
+
+# Copy libary file
+mkdir ../libraries
+cp library/libgmod.so ../libraries/
+cd ..
+
+# Download godot source code
+git clone https://github.com/godotengine/godot.git -b 3.4
 
 # Copy module files to modules directory
 mkdir godot/modules/mediapipe
