@@ -54,5 +54,4 @@ It is important to use multiple threads as the mediapipe library uses a while lo
 ## Issues:
 
 For now the tracking works and the module can get the data, but there are no methods to access that data inside godot. Once these methods are put in place, I will also create the documentation.
-
-The path for the graph file is also hard coded inside the module.
+Only the graph file `holistic_tracking_cpu.pbtxt` has been tested.
