@@ -4,5 +4,15 @@ Import('env')
 
 module_env = env.Clone()
 module_env.add_source_files(env.modules_sources, "*.cpp")
-env.Append(LIBPATH=['include'])
+
+# For some reason, these don't work
+# /usr/bin/ld: cannot find -lgmod: No such file or directory
+# env.Append(LIBPATH=['libpath'])
+# env.Append(LIBPATH=['../mediapipe/libpath'])
+
+# But these do ( What is going on here )
+env.Append(LIBPATH=['../../modules/mediapipe/libpath'])
+# env.Append(LIBPATH=['../../../godot/modules/mediapipe/libpath'])
+# env.Append(LIBPATH=['../../../libraries'])
+
 env.Append(LIBS=['gmod'])

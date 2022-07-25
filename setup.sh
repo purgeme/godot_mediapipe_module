@@ -25,5 +25,6 @@ mkdir godot/modules/mediapipe/mediapipe
 # header file
 \cp MediapipeModule_library/godot/gmod_core.h godot/modules/mediapipe/
 # library 
-\cp -r libraries/libgmod.so godot/modules/mediapipe/include/
-chmod +w godot/modules/mediapipe/include/libgmod.so
+mkdir godo/modules/mediapipe/libpath
+\cp -r libraries/libgmod.so godot/modules/mediapipe/libpath/
+chmod +w godot/modules/mediapipe/libpath/libgmod.so
