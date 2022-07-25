@@ -15,10 +15,15 @@ protected:
     static void _bind_methods();
 
 public:
-    void sayhi();
+    void toggle_part(bool x, String part);
+
+    Array get_face_tracking_data();
+
     void tracking_start(String graph_name);
     void tracking_stop();
-    int get_face_tracking_data();
+
+    void sayhi();
+
     Mediapipe();
 };
 

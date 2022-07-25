@@ -1,4 +1,3 @@
-#include <string>
 #pragma once
 
 #if defined(_MSC_VER) // M$VS
@@ -28,10 +27,22 @@ extern "C"
 
 //C code goes here
 
-void hello();
 double ** return_face_trackers();
-int start(const char* graph_name);
+double ** return_hand_right_trackers();
+double ** return_hand_left_trackers();
+double ** return_pose_trackers();
+
+void toggle_face(bool x);
+void toggle_hand_right(bool x);
+void toggle_hand_left(bool x);
+void toggle_pose(bool x);
+void toggle_camera(bool x);
+void toggle_detection(bool x);
+
+int start(const char* filename);
 void stop();
+
+void hello();
 
 #ifdef __cplusplus
 } // extern "C"
