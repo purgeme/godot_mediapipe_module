@@ -1,70 +1,173 @@
 /* mediapipe.cpp */
 
 #include "mediapipe.h"
-#include "gmod_core.h"
 
-void Mediapipe::sayhi() {
-    hello();
+///////////////////////////////////////////////////////////
+
+bool Mediapipe::get_camera(){
+    return gmod->get_camera();
+};
+
+void Mediapipe::set_camera(bool x){
+    gmod->set_camera(x);
+};
+
+bool Mediapipe::get_overlay(){
+    return gmod->get_overlay();
+};
+
+void Mediapipe::set_overlay(bool x){
+    gmod->set_overlay(x);
+};
+
+void Mediapipe::set_camera_props(int cam_id, int cam_resx, int cam_resy, int cam_fps){
+    gmod->set_camera_props(cam_id, cam_resx, cam_resy, cam_fps);
+};
+
+///////////////////////////////////////////////////////////
+
+void Mediapipe::track_face(bool toggle){
+    if(toggle){
+        face_tracker = gmod->create_observer("face_landmarks");
+        face_tracker->SetPresenceCallback([](class IObserver* observer, bool present){});
+        face_tracker->SetPacketCallback([this](class IObserver* observer){ 
+            const mediapipe::NormalizedLandmarkList* data = (mediapipe::NormalizedLandmarkList*)(observer->GetData()); 
+            // size_t message_type = observer->GetMessageType();
+            mx.lock();
+            for ( int i=0; i < 468; ++i){
+                const mediapipe::NormalizedLandmark& landmark = data->landmark(i);
+                Vector3 y;
+                y.x = landmark.x();
+                y.y = landmark.y();
+                y.z = landmark.z();
+                face_tracking_data.set(i, y);
+            }
+            mx.unlock();
+        });
+    } else {
+        face_tracker = nullptr;
+    }
+};
+
+Vector3 Mediapipe::get_face_tracking_data(int indx){
+    return face_tracking_data[indx];
 }
 
-void Mediapipe::tracking_start(String graph_name) {
-    start(graph_name.ascii().get_data());
+void Mediapipe::track_right_hand(bool toggle){
+    if(toggle){
+        right_hand_tracker = gmod->create_observer("right_hand_landmarks");
+        right_hand_tracker->SetPresenceCallback([](class IObserver* observer, bool present){});
+        right_hand_tracker->SetPacketCallback([this](class IObserver* observer){ 
+            const mediapipe::NormalizedLandmarkList* data = (mediapipe::NormalizedLandmarkList*)(observer->GetData()); 
+            // size_t message_type = observer->GetMessageType();
+            mx.lock();
+            for ( int i=0; i < 21; ++i){
+                const mediapipe::NormalizedLandmark& landmark = data->landmark(i);
+                Vector3 y;
+                y.x = landmark.x();
+                y.y = landmark.y();
+                y.z = landmark.z();
+                right_hand_tracking_data.set(i, y);
+            }
+            mx.unlock();
+        });
+    } else {
+        right_hand_tracker = nullptr;
+    }
+};
+
+Vector3 Mediapipe::get_right_hand_tracking_data(int indx){
+    return right_hand_tracking_data[indx];
 }
 
-void Mediapipe::tracking_stop() {
-    stop();
+void Mediapipe::track_left_hand(bool toggle){
+    if(toggle){
+        left_hand_tracker = gmod->create_observer("left_hand_landmarks");
+        left_hand_tracker->SetPresenceCallback([](class IObserver* observer, bool present){});
+        left_hand_tracker->SetPacketCallback([this](class IObserver* observer){ 
+            const mediapipe::NormalizedLandmarkList* data = (mediapipe::NormalizedLandmarkList*)(observer->GetData()); 
+            // size_t message_type = observer->GetMessageType();
+            mx.lock();
+            for ( int i=0; i < 21; ++i){
+                const mediapipe::NormalizedLandmark& landmark = data->landmark(i);
+                Vector3 y;
+                y.x = landmark.x();
+                y.y = landmark.y();
+                y.z = landmark.z();
+                left_hand_tracking_data.set(i, y);
+            }
+            mx.unlock();
+        });
+    } else {
+        left_hand_tracker = nullptr;
+    }
+};
+
+Vector3 Mediapipe::get_left_hand_tracking_data(int indx){
+    return left_hand_tracking_data[indx];
 }
 
-void Mediapipe::toggle_part(bool x, String part){
-    if(part=="face"){
-        toggle_face(x);
+void Mediapipe::track_pose(bool toggle){
+    if(toggle){
+        pose_tracker = gmod->create_observer("pose_landmarks");
+        pose_tracker->SetPresenceCallback([](class IObserver* observer, bool present){});
+        pose_tracker->SetPacketCallback([this](class IObserver* observer){ 
+            const mediapipe::NormalizedLandmarkList* data = (mediapipe::NormalizedLandmarkList*)(observer->GetData()); 
+            // size_t message_type = observer->GetMessageType();
+            mx.lock();
+            for ( int i=0; i < 33; ++i){
+                const mediapipe::NormalizedLandmark& landmark = data->landmark(i);
+                Vector3 y;
+                y.x = landmark.x();
+                y.y = landmark.y();
+                y.z = landmark.z();
+                pose_tracking_data.set(i, y);
+            }
+            mx.unlock();
+        });
+    } else {
+        pose_tracker = nullptr;
     }
-    if(part=="hand_right"){
-        toggle_hand_right(x);
-    }
-    if(part=="hand_left"){
-        toggle_hand_left(x);
-    }
-    if(part=="pose"){
-        toggle_pose(x);
-    }
-    if(part=="camera"){
-        toggle_camera(x);
-    }
-    if(part=="detection"){
-        toggle_detection(x);
-    }
+};
+
+Vector3 Mediapipe::get_pose_tracking_data(int indx){
+    return pose_tracking_data[indx];
 }
 
-Array Mediapipe::get_face_tracking_data() {
-    // double** tmp = return_face_trackers();
-    // // List<float> *E=tmp;
-    // // for(int i=0;E;E=E->next()) {
-    // //     print_line(E->get()); // print the element
-    // // }
-    // printf("%f", tmp[0][0]);
-    // int x = tmp[0][0]*100;
-    // return x;
-    double** tmp = return_face_trackers();
-    Array x;
-    for(int i=0; i<468; i++){
-        Array y;
-        y.push_back(tmp[i][0]);
-        y.push_back(tmp[i][1]);
-        y.push_back(tmp[i][2]);
-        x.push_back(y);
-    }
-    return x;
-}
+///////////////////////////////////////////////////////////
+
+void Mediapipe::start(String filename){
+    gmod->start(filename.ascii().get_data());
+};
+
+void Mediapipe::stop(){
+    gmod->stop();
+};
+
+///////////////////////////////////////////////////////////
 
 void Mediapipe::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("toggle_part", "bool", "part_name"), &Mediapipe::toggle_part);
+    ClassDB::bind_method(D_METHOD("get_camera"), &Mediapipe::get_camera);
+    ClassDB::bind_method(D_METHOD("set_camera", "bool"), &Mediapipe::set_camera);
+    ClassDB::bind_method(D_METHOD("get_overlay"), &Mediapipe::get_overlay);
+    ClassDB::bind_method(D_METHOD("set_overlay", "bool"), &Mediapipe::set_overlay);
+    ClassDB::bind_method(D_METHOD("set_camera_props", "cam_id", "cam_resx", "cam_resy", "cam_fps"), &Mediapipe::set_camera_props);
+    ClassDB::bind_method(D_METHOD("track_face", "bool"), &Mediapipe::track_face);
     ClassDB::bind_method(D_METHOD("get_face_tracking_data"), &Mediapipe::get_face_tracking_data);
-    ClassDB::bind_method(D_METHOD("tracking_start", "graph_name"), &Mediapipe::tracking_start);
-    ClassDB::bind_method(D_METHOD("tracking_stop"), &Mediapipe::tracking_stop);
-    ClassDB::bind_method(D_METHOD("sayhi"), &Mediapipe::sayhi);
+    ClassDB::bind_method(D_METHOD("track_right_hand", "bool"), &Mediapipe::track_right_hand);
+    ClassDB::bind_method(D_METHOD("get_right_hand_tracking_data"), &Mediapipe::get_right_hand_tracking_data);
+    ClassDB::bind_method(D_METHOD("track_left_hand", "bool"), &Mediapipe::track_left_hand);
+    ClassDB::bind_method(D_METHOD("get_left_hand_tracking_data"), &Mediapipe::get_left_hand_tracking_data);
+    ClassDB::bind_method(D_METHOD("track_pose", "bool"), &Mediapipe::track_pose);
+    ClassDB::bind_method(D_METHOD("get_pose_tracking_data"), &Mediapipe::get_pose_tracking_data);
+    ClassDB::bind_method(D_METHOD("start", "graph_file_name"), &Mediapipe::start);
+    ClassDB::bind_method(D_METHOD("stop"), &Mediapipe::stop);
 }
 
 Mediapipe::Mediapipe() {
-    x = 0;
+    gmod = CreateGMOD();
+    face_tracking_data.resize(468);
+    right_hand_tracking_data.resize(21);
+    left_hand_tracking_data.resize(21);
+    pose_tracking_data.resize(33);
 }

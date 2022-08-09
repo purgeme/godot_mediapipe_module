@@ -9,6 +9,8 @@ module_env.add_source_files(env.modules_sources, "*.cpp")
 # /usr/bin/ld: cannot find -lgmod: No such file or directory
 # env.Append(LIBPATH=['libpath'])
 # env.Append(LIBPATH=['../mediapipe/libpath'])
+module_env.Append(CPPPATH=['../mediapipe/protobuf-cpp-3.19.1/protobuf-3.19.1/src/', 'mediapipe/'])
+# env.Append(CPPPATH=['../mediapipe/protobuf-cpp-3.19.1/protobuf-3.19.1/src/', 'mediapipe/'])
 
 # But these do ( What is going on here )
 env.Append(LIBPATH=['../../modules/mediapipe/libpath'])

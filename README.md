@@ -18,7 +18,11 @@ Before running the binary make sure to run:
 `source envs`
 to setup the environment variables so that the binary is able to find the library.
 
-You can also move the library anywhere else and add the directory to the `LD_LIBRARY_PATH` variable.
+You can also move the library anywhere else and add the directory to the `LD_LIBRARY_PATH` environment variable.
+
+Any exported projects built in godot would also require this library as well as mediapipe repo one directory above that of the executable.
+
+( mediapipe repo is required to be one directory above to avoid importing it into godot )
 
 ## Using the module
 
@@ -30,27 +34,19 @@ Sample code:
 extends Node2D
 
 var s = Mediapipe.new()
-var thread
 
 func _ready():
-
-	thread = Thread.new()
-	thread.start(self, "_thread_function")
-
-func _thread_function(userdata):
-	s.sayhi()
+	s.set_camera_props(1, 640, 480, 30);
+	s.set_camera(true) # Show camera output
+	s.set_overlay(true) # Show overlay
+	s.track_face(true) # Track face
 	s.tracking_start("/home/test/Projects/MediapipeModule_module/MediapipeModule_library/mediapipe/mediapipe/graphs/holistic_tracking/holistic_tracking_cpu.pbtxt") # The path to the graph file as string in brackets
 
 func _process(delta):
-	var x = s.get_face_tracking_data()
+	var x = s.get_face_tracking_data() # Get face trackers
+	print(x) # Print the data
 	pass
-
-func _exit_tree():
-	thread.wait_to_finish()
 ```
-
-It is important to use multiple threads as the mediapipe library uses a while loop and since by defaul everything is run on single thread, it freezes the game and essentially makes it unusable. To avoid freezing we run the tracking_start() method on a new thread but the data can be accessed on the main thread with methods like get_face_tracking_data().
-
 ## Issues:
 
 For now the tracking works and the module can get the data, but there are no methods to access that data inside godot. Once these methods are put in place, I will also create the documentation.
