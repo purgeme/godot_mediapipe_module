@@ -29,5 +29,6 @@ mkdir godot/modules/mediapipe
 mkdir godot/modules/mediapipe/mediapipe
 \cp -r MediapipeModule_library/mediapipe/mediapipe/* godot/modules/mediapipe/mediapipe/
 # library 
+mkdir godot/modules/mediapipe/libpath
 \cp -r libraries/libgmod.so godot/modules/mediapipe/libpath/
 chmod +w godot/modules/mediapipe/libpath/libgmod.so
