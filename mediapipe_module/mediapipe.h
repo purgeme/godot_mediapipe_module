@@ -16,12 +16,16 @@ class Mediapipe : public Reference {
 
     IObserver* face_tracker;
     Array face_tracking_data;
+    bool face_present;
     IObserver* right_hand_tracker;
     Array right_hand_tracking_data;
+    bool right_hand_present;
     IObserver* left_hand_tracker;
     Array left_hand_tracking_data;
+    bool left_hand_present;
     IObserver* pose_tracker;
     Array pose_tracking_data;
+    bool pose_present;
 
     std::mutex mx;
 
@@ -43,6 +47,10 @@ protected:
     Vector3 get_right_hand_tracking_data(int indx);
     Vector3 get_left_hand_tracking_data(int indx);
     Vector3 get_pose_tracking_data(int indx);
+    bool get_face_present();
+    bool get_right_hand_present();
+    bool get_left_hand_present();
+    bool get_pose_present();
     void start(String filename);
     void stop();
 
