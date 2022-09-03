@@ -3,7 +3,13 @@
 This is a module for Godot. It provides access to this mediapipe library inside godot as a module.
 This provides different types of tracking/solutions from mediapipe inside godot.
 
-`Currently the library does not have gpu support`
+The way things are set up, it can run other graphs but expects output stream of `NormalizedLandmarkList` type.
+Only the graph file `holistic_tracking_cpu.pbtxt` has been tested and works for now. The observer names are the output streams in the graph.
+The supported observer names for holistic tracking:
+- "face_landmarks" -> Get face tracking data
+- "right_hand_landmarks" -> Get right hand tracking data
+- "left_hand_landmarks" -> Get left hand tracking data
+- "pose_landmarks" -> Get pose tracking data
 
 ## Getting started:
 
@@ -46,13 +52,18 @@ func _ready():
 	s.set_camera_props(1, 640, 480, 30);
 	s.set_camera(true) # Show camera output
 	s.set_overlay(true) # Show overlay
-	s.track_face(true) # Track face
+	s.create_observer("face_landmarks") # Create observer to track face
+	s.create_observer("pose_landmarks") # Create observer to track pose
+	s.add_callbacks() # Add callbacks for all observers
 	s.tracking_start("mediapipe_graphs/holistic_tracking/holistic_tracking_cpu.pbtxt") # The path to the graph file as string in brackets
 
 func _process(delta):
-	var x = s.get_face_tracking_data(0) # Get position of landmark with index 0
-	print(x) # Print the data
-	pass
+	# Get data at 0, face was first so index 0
+	var face = s.get_data(0) # get_data returns an array of tracked landmarks
+	# Get data at 1, pose was second so index 1
+ 	var pose = s.get_data(1)
+	# Similarly for more observers added, the index will be incremented
+	
+	print(face) # Print the data
 ```
 
-Only the graph file `holistic_tracking_cpu.pbtxt` has been tested.
