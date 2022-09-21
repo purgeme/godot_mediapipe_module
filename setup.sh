@@ -26,8 +26,8 @@ mv mediapipe_graphs ../mediapipe_graphs
 # Copy import files
 mv import_files ../import_files
 # Copy import files
-mv import_files/mediapipe ../mediapipe_module/mediapipe
 cd ..
+mv import_files/mediapipe mediapipe_module/mediapipe
 cd mediapipe_module/
 mkdir libpath
 \cp -r ../library/libgmod.so libpath/libgmod.so
