@@ -26,40 +26,48 @@ void Mediapipe::set_camera_props(int cam_id, int cam_resx, int cam_resy, int cam
 
 ///////////////////////////////////////////////////////////
 
-int Mediapipe::create_observer(String x){
-    auto* observer = gmod->create_observer(x.ascii().get_data());
-    observers.push_back(observer);
+int Mediapipe::create_observer(String name, String type){
+    auto* observer = gmod->create_observer(name.ascii().get_data());
+    mob tmp;
+    tmp.observer = observer;
+    tmp.type = type;
+    observers.push_back(tmp);
     return observers.size() - 1;
 }
 
 void Mediapipe::add_callbacks(){
-    for(int i=0; i<observers.size(); i++){
-        _presence.push_back(0);
-        Array x;
-        _data.push_back(x);
-    }
+    std::cout << "1" << std::endl;
+    std::cout << "observers: " << observers.size() << std::endl;
+    _data.resize(observers.size());
+    _presence.resize(observers.size());
+
     for (int i=0; i<observers.size(); i++){
-        observers[i]->SetPresenceCallback([this, i](class IObserver* observer, bool present){
-            _presence[i] = present;
-        });
-        observers[i]->SetPacketCallback([this, i](class IObserver* observer){
-            const mediapipe::NormalizedLandmarkList* data = (mediapipe::NormalizedLandmarkList*)(observer->GetData());
-            Array current_array = std::ref(_data[i]);
-            if (current_array.size() != data->landmark_size()){
-                current_array.resize(data->landmark_size());
-            }
-            // size_t message_type = observer->GetMessageType();
-            mx.lock();
-            for ( int u=0; u < data->landmark_size(); ++u){
-                const mediapipe::NormalizedLandmark& landmark = data->landmark(u);
-                Vector3 y;
-                y.x = landmark.x();
-                y.y = landmark.y();
-                y.z = landmark.z();
-                current_array.set(u, y);
-            }
-            mx.unlock();
-        });
+        std::cout << "2" << std::endl;
+        if(observers[i].type == "NormalizedLandmarkList"){
+            observers[i].observer->SetPresenceCallback([this, i](class IObserver* observer, bool present){
+                std::cout << "3" << std::endl;
+                _presence.set(i, present);
+            });
+            observers[i].observer->SetPacketCallback([this, i](class IObserver* observer){
+                const mediapipe::NormalizedLandmarkList* data = (mediapipe::NormalizedLandmarkList*)(observer->GetData());
+                int size = (int)data->landmark_size();
+                Array current_array;
+                current_array.resize(size);
+                // size_t message_type = observer->GetMessageType();
+                std::cout << "4" << std::endl;
+                mx.lock();
+                for ( int u=0; u < size; ++u){
+                    const mediapipe::NormalizedLandmark& landmark = data->landmark(u);
+                    Vector3 y;
+                    y.x = landmark.x();
+                    y.y = landmark.y();
+                    y.z = landmark.z();
+                    current_array.set(u, y);
+                }
+                _data.set(i, current_array);
+                mx.unlock();
+            });
+        }
     }
 }
 
@@ -90,8 +98,8 @@ void Mediapipe::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_overlay", "bool"), &Mediapipe::set_overlay);
 
     ClassDB::bind_method(D_METHOD("create_observer", "observer name"), &Mediapipe::create_observer);
-    ClassDB::bind_method(D_METHOD("set_callbacks"), &Mediapipe::set_callbacks);
-    ClassDB::bind_method(D_METHOD("get_data"), &Mediapipe::get_data);
+    ClassDB::bind_method(D_METHOD("add_callbacks"), &Mediapipe::add_callbacks);
+    ClassDB::bind_method(D_METHOD("get_data", "index"), &Mediapipe::get_data);
 
     ClassDB::bind_method(D_METHOD("start", "graph_file_name"), &Mediapipe::start);
     ClassDB::bind_method(D_METHOD("stop"), &Mediapipe::stop);
@@ -99,8 +107,4 @@ void Mediapipe::_bind_methods() {
 
 Mediapipe::Mediapipe() {
     gmod = CreateGMOD();
-    face_tracking_data.resize(468);
-    right_hand_tracking_data.resize(21);
-    left_hand_tracking_data.resize(21);
-    pose_tracking_data.resize(33);
 }

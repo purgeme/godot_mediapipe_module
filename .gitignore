@@ -1,0 +1,8 @@
+import_files/*
+mediapipe_models/*
+mediapipe_graphs/*
+mediapipe_module/protobuf*
+mediapipe_module/mediapipe*
+mediapipe_module/libpath*
+library/libgmod.so
+.vscode/*

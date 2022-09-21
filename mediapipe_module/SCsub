@@ -5,7 +5,7 @@ Import('env')
 module_env = env.Clone()
 module_env.add_source_files(env.modules_sources, "*.cpp")
 
-module_env.Append(CPPPATH=['../mediapipe/protobuf-cpp-3.19.1/protobuf-3.19.1/src/', 'mediapipe/'])
+module_env.Append(CPPPATH=['protobuf-3.19.1/src/', 'mediapipe/'])
 # For some reason, these don't work
 # /usr/bin/ld: cannot find -lgmod: No such file or directory
 # env.Append(LIBPATH=['libpath'])
