@@ -52,8 +52,9 @@ func _ready():
 	s.set_camera_props(1, 640, 480, 30);
 	s.set_camera(true) # Show camera output
 	s.set_overlay(true) # Show overlay
-	s.create_observer("face_landmarks") # Create observer to track face
-	s.create_observer("pose_landmarks") # Create observer to track pose
+	s.create_observer("face_landmarks", "NormalizedLandmarkList") # Create observer to track face, we also pass the data type for this stream name
+	# The data type is that which is used in the graph for this stream.
+	s.create_observer("pose_landmarks", "NormalizedLandmarkList") # Create observer to track pose
 	s.add_callbacks() # Add callbacks for all observers
 	s.tracking_start("mediapipe_graphs/holistic_tracking/holistic_tracking_cpu.pbtxt") # The path to the graph file as string in brackets
 
