@@ -3,13 +3,7 @@
 This is a module for Godot. It provides access to this mediapipe library inside godot as a module.
 This provides different types of tracking/solutions from mediapipe inside godot.
 
-The way things are set up, it can run other graphs but expects output stream of `NormalizedLandmarkList` type.
-Only the graph file `holistic_tracking_cpu.pbtxt` has been tested and works for now. The observer names are the output streams in the graph.
-The supported observer names for holistic tracking:
-- "face_landmarks" -> Get face tracking data
-- "right_hand_landmarks" -> Get right hand tracking data
-- "left_hand_landmarks" -> Get left hand tracking data
-- "pose_landmarks" -> Get pose tracking data
+The way things are set up, it can run other graphs but only output stream of `NormalizedLandmarkList` type is supported for now.
 
 ## Getting started:
 
