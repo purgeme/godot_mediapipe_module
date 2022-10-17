@@ -24,37 +24,40 @@ void Mediapipe::set_camera_props(int cam_id, int cam_resx, int cam_resy, int cam
     gmod->set_camera_props(cam_id, cam_resx, cam_resy, cam_fps);
 };
 
+bool Mediapipe::get_loaded(){
+    return gmod->is_loaded();
+}
+
 ///////////////////////////////////////////////////////////
 
-int Mediapipe::create_observer(String name, String type){
+int Mediapipe::create_observer(String name){
+    std::cout << "Creating observer..." << std::endl;
+    std::cout << "Observer name: " << name.ascii().get_data() << std::endl;
     auto* observer = gmod->create_observer(name.ascii().get_data());
-    mob tmp;
-    tmp.observer = observer;
-    tmp.type = type;
-    observers.push_back(tmp);
+    observers.push_back(observer);
     return observers.size() - 1;
 }
 
 void Mediapipe::add_callbacks(){
-    std::cout << "1" << std::endl;
-    std::cout << "observers: " << observers.size() << std::endl;
+    std::cout << "Adding callbacks..." << std::endl;
+    std::cout << "No. of observers: " << observers.size() << std::endl;
     _data.resize(observers.size());
     _presence.resize(observers.size());
 
     for (int i=0; i<observers.size(); i++){
-        std::cout << "2" << std::endl;
-        if(observers[i].type == "NormalizedLandmarkList"){
-            observers[i].observer->SetPresenceCallback([this, i](class IObserver* observer, bool present){
-                std::cout << "3" << std::endl;
+        IObserver* observer = observers[i];
+        std::string message_type = observer->GetMessageType();
+        std::cout << "Observer index: " << 0 << "; Packet type: " << message_type << std::endl;
+        if(message_type == "mediapipe::NormalizedLandmarkList"){
+            observer->SetPresenceCallback([this, i](class IObserver* observer, bool present){
                 _presence.set(i, present);
             });
-            observers[i].observer->SetPacketCallback([this, i](class IObserver* observer){
+            observer->SetPacketCallback([this, i](class IObserver* observer){
                 const mediapipe::NormalizedLandmarkList* data = (mediapipe::NormalizedLandmarkList*)(observer->GetData());
                 int size = (int)data->landmark_size();
                 Array current_array;
                 current_array.resize(size);
                 // size_t message_type = observer->GetMessageType();
-                std::cout << "4" << std::endl;
                 mx.lock();
                 for ( int u=0; u < size; ++u){
                     const mediapipe::NormalizedLandmark& landmark = data->landmark(u);
@@ -69,6 +72,8 @@ void Mediapipe::add_callbacks(){
             });
         }
     }
+
+    std::cout << "Finished adding callbacks..." << std::endl;
 }
 
 Array Mediapipe::get_data(int index){
@@ -79,11 +84,17 @@ Array Mediapipe::get_data(int index){
 
 
 void Mediapipe::start(String filename){
+    std::cout << "Starting graph..." << std::endl;
     gmod->start(filename.ascii().get_data());
+    while(!gmod->is_loaded()){}
+    std::cout << "Graph loaded and running..." << std::endl;
+    add_callbacks();
 };
 
 void Mediapipe::stop(){
+    std::cout << "Stopping graph..." << std::endl;
     gmod->stop();
+    std::cout << "Graph stopped..." << std::endl;
 };
 
 ///////////////////////////////////////////////////////////
@@ -97,8 +108,9 @@ void Mediapipe::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_overlay"), &Mediapipe::get_overlay);
     ClassDB::bind_method(D_METHOD("set_overlay", "bool"), &Mediapipe::set_overlay);
 
+    ClassDB::bind_method(D_METHOD("is_loaded"), &Mediapipe::get_loaded);
+
     ClassDB::bind_method(D_METHOD("create_observer", "observer name"), &Mediapipe::create_observer);
-    ClassDB::bind_method(D_METHOD("add_callbacks"), &Mediapipe::add_callbacks);
     ClassDB::bind_method(D_METHOD("get_data", "index"), &Mediapipe::get_data);
 
     ClassDB::bind_method(D_METHOD("start", "graph_file_name"), &Mediapipe::start);

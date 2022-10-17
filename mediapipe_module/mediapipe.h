@@ -15,12 +15,7 @@ class Mediapipe : public Reference {
 
     IGMOD* gmod;
 
-    struct mob {
-        IObserver* observer;
-        String type;
-    };
-
-    std::vector<struct mob> observers = {};
+    std::vector<class IObserver*> observers = {};
     Array _presence;
     Array _data;
 
@@ -38,7 +33,9 @@ protected:
     bool get_overlay();
     void set_overlay(bool x);
 
-    int create_observer(String name, String type);
+    bool get_loaded();
+
+    int create_observer(String name);
     void add_callbacks();
     Array get_data(int index);
 
