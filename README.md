@@ -3,7 +3,8 @@
 This is a module for Godot. It provides access to this mediapipe library inside godot as a module.
 This provides different types of tracking/solutions from mediapipe inside godot.
 
-The way things are set up, it can run other graphs but only output stream of `NormalizedLandmarkList` type is supported for now.
+The way things are set up, it can run other graphs but only output stream of `mediapipe::NormalizedLandmarkList` type is supported for now.
+Support for more data types such as Images is coming...
 
 ## Getting started:
 
@@ -46,10 +47,9 @@ func _ready():
 	s.set_camera_props(1, 640, 480, 30);
 	s.set_camera(true) # Show camera output
 	s.set_overlay(true) # Show overlay
-	s.create_observer("face_landmarks", "NormalizedLandmarkList") # Create observer to track face, we also pass the data type for this stream name
+	s.create_observer("face_landmarks") # Create observer to track face, we also pass the data type for this stream name
 	# The data type is that which is used in the graph for this stream.
-	s.create_observer("pose_landmarks", "NormalizedLandmarkList") # Create observer to track pose
-	s.add_callbacks() # Add callbacks for all observers
+	s.create_observer("pose_landmarks") # Create observer to track pose
 	s.tracking_start("mediapipe_graphs/holistic_tracking/holistic_tracking_cpu.pbtxt") # The path to the graph file as string in brackets
 
 func _process(delta):
@@ -62,3 +62,7 @@ func _process(delta):
 	print(face) # Print the data
 ```
 
+## TODO:
+
+- [ ] Faster way to compare data type in callback
+- [ ] Add images to available data types
