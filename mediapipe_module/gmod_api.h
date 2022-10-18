@@ -1,18 +1,10 @@
-#include<cstddef>
+#pragma once
+#include<string>
 #include<functional>
-
-class IPacketCallback
-{
-    public:
-        virtual void OnPresence(class IObserver* observer, bool present) = 0;
-        virtual void OnPacket(class IObserver* observer) = 0;
-};
 
 class IObserver
 {
     public:
-        // virtual void SetPresenceCallback(void (*in_presence_callback)(class IObserver*, bool))=0;
-        // virtual void SetPacketCallback(void (*in_packet_callback)(class IObserver*))=0;
         virtual void SetPresenceCallback(std::function<void(class IObserver*, bool)> in_presence_callback)=0;
         virtual void SetPacketCallback(std::function<void(class IObserver*)> in_packet_callback)=0;
         virtual std::string GetMessageType()=0;

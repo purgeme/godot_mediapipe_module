@@ -46,18 +46,16 @@ void Mediapipe::add_callbacks(){
 
     for (int i=0; i<observers.size(); i++){
         IObserver* observer = observers[i];
-        std::string message_type = observer->GetMessageType();
-        std::cout << "Observer index: " << 0 << "; Packet type: " << message_type << std::endl;
-        if(message_type == "mediapipe::NormalizedLandmarkList"){
-            observer->SetPresenceCallback([this, i](class IObserver* observer, bool present){
-                _presence.set(i, present);
-            });
-            observer->SetPacketCallback([this, i](class IObserver* observer){
+        observer->SetPresenceCallback([this, i](class IObserver* observer, bool present){
+            _presence.set(i, present);
+        });
+        observer->SetPacketCallback([this, i](class IObserver* observer){
+            std::string message_type = observer->GetMessageType();
+            if(message_type == "mediapipe::NormalizedLandmarkList"){
                 const mediapipe::NormalizedLandmarkList* data = (mediapipe::NormalizedLandmarkList*)(observer->GetData());
                 int size = (int)data->landmark_size();
                 Array current_array;
                 current_array.resize(size);
-                // size_t message_type = observer->GetMessageType();
                 mx.lock();
                 for ( int u=0; u < size; ++u){
                     const mediapipe::NormalizedLandmark& landmark = data->landmark(u);
@@ -69,8 +67,8 @@ void Mediapipe::add_callbacks(){
                 }
                 _data.set(i, current_array);
                 mx.unlock();
-            });
-        }
+            }
+        });
     }
 
     std::cout << "Finished adding callbacks..." << std::endl;
