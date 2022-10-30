@@ -7,7 +7,8 @@ module_env.add_source_files(env.modules_sources, "*.cpp")
 
 module_env.Append(CPPPATH=['protobuf-3.19.1/src/', 'mediapipe/'])
 
-env.Append(LIBPATH=['libpath'])
+# env.Append(LIBPATH=['libpath']) # This is not working ??
+env.Append(LIBPATH=['../../modules/mediapipe_module/libpath'])
 
 env.Append(RPATH=['.'])
 
