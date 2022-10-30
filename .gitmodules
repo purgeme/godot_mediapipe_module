@@ -1,0 +1,7 @@
+[submodule "mediapipe_cpp_lib"]
+	path = mediapipe_cpp_lib
+	url = https://github.com/purgeme/mediapipe_cpp_lib.git
+[submodule "godot"]
+	path = godot
+	url = https://github.com/godotengine/godot.git
+	branch = 3.5
