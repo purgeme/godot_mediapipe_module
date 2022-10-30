@@ -3,11 +3,11 @@
 #include "register_types.h"
 
 #include "core/class_db.h"
-#include "mediapipe.h"
+#include "mediapipe_module.h"
 
-void register_mediapipe_types() {
+void register_mediapipe_module_types() {
     ClassDB::register_class<Mediapipe>();
 }
 
-void unregister_mediapipe_types() {
+void unregister_mediapipe_module_types() {
 }
