@@ -1,3 +1,8 @@
+# Status
+Though I have been working on this project on my machine, porting it to gdextensions and adding new features, development on the library has been halted for now, same goes for this repo as well. Reasons given in the mediapipe_cpp_lib repo.
+
+---
+
 # MediapipeModule_module
 
 This is a module for Godot. It provides access to this mediapipe library inside godot as a module.
